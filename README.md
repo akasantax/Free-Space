@@ -4,4 +4,4 @@ This repository contains files for:
 * Detection of dynamic objects using a RANSAC based segmentation of key  points.
 * Mapping of sequence of images from one occupancy grid to another.
 
-Note: code is currently not clean, to be updated soon.
+Note: code is currently not clean and need to add a few things, to be updated soon.
