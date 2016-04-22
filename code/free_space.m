@@ -1,9 +1,9 @@
 tic
 %% reading the stereo images
-I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000017_10.png');
-I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000017_10.png');
+I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000008_11.png');
+I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000008_11.png');
 I3 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_11.png');
-disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000017_10.png');
+disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000008_10.png');
 
 
 % I1_g = rgb2gray(I1);
@@ -199,8 +199,11 @@ Likelihood_Dij = Likelihood_Dij*100000;
  image = Likelihood_Dij == 0;
  image_target = zeros(grid_z,grid_x);
  
+ target_pts = zeros(1,2);
+ ant = 1;
  for i=1:grid_x
      cnt=0;
+     
      for j=1:grid_z-1
          
          if(image(j,i) == 0 && image(j+1,i) ==1)
@@ -210,6 +213,9 @@ Likelihood_Dij = Likelihood_Dij*100000;
          end
          if(cnt == 2)
              image_target(j,i) = 1;
+             target_pts(ant,1) = j;
+             target_pts(ant,2) = i;
+             ant = ant+1;
              break;
          end
 %          if(image(j,i) == 1 && cnt == 0)
@@ -223,32 +229,38 @@ Likelihood_Dij = Likelihood_Dij*100000;
  end
  figure, imshow(image_target);
   figure, imshow(Likelihood_Dij,[0,10]);
- 
-  %% plotting free space on the image
-  [m,indx2] = max(image_target);
-  grid_coordinates = zeros(grid_x,2);
-  
-  % getting x and z from the occupancy grid map
-  for i=1:grid_x
-      grid_coordinates(i,1) = i;
-      grid_coordinates(i,2) = indx(1,i);      
+ actual_pts = zeros(1,2);
+  for i=1:1241
+      [tx,ty] = findImageCoordinate(disparityMap2,target_pts(i,2),target_pts(i,1));
+      actual_pts(i,1) = tx;
+      actual_pts(i,2) = ty;      
   end
-  for k=1:grid_x
-      
-      i = grid_coordinates(k,1) * res_x;
-      j = grid_coordinates(k,2) * res_z;
-      
-      y_s = findPoints(i,j,M2);
-      
-      x = M2(k,1);
-      y = M2(k,1);
-      z = floor(M2(k,3));
-      d = D(k,1);
-
-      [i,j] = find_grid(x,z,res_x,res_z);
-      u_ij = floor (  ((i-1)*res_x + i*res_x)/2 );
-      d_ij = floor (  ((j-1)*res_z + j*res_z)/2  );
-  end  
+  
+  %% plotting free space on the image
+%   [m,indx2] = max(image_target);
+%   grid_coordinates = zeros(grid_x,2);
+%   
+%   % getting x and z from the occupancy grid map
+%   for i=1:grid_x
+%       grid_coordinates(i,1) = i;
+%       grid_coordinates(i,2) = indx(1,i);      
+%   end
+%   for k=1:grid_x
+%       
+%       i = grid_coordinates(k,1) * res_x;
+%       j = grid_coordinates(k,2) * res_z;
+%       
+%       y_s = findPoints(i,j,res_x,res_z,M2);
+%       
+%       x = M2(k,1);
+%       y = M2(k,1);
+%       z = floor(M2(k,3));
+%       d = D(k,1);
+% 
+%       [i,j] = find_grid(x,z,res_x,res_z);
+%       u_ij = floor (  ((i-1)*res_x + i*res_x)/2 );
+%       d_ij = floor (  ((j-1)*res_z + j*res_z)/2  );
+%   end  
   
  
  %% try with simple thresholding too.
