@@ -1,20 +1,31 @@
 
-% function model_fitting_RANSAC_linear(I1,I2)
+function [peaks] =  model_fitting_RANSAC_linear(I1,I2, threshold_residual)
 
 %% Find Corresponding Interest Points Between Pair of Images
 % Read the stereo images.
-% I1 = rgb2gray(imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_10.png'));
-% I2 = rgb2gray(imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_10.png'));
-% I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000107.png'));
-% I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000108.png'));
-% I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000000.png'));
-% I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000001.png'));
-I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26/2011_09_26_drive_0035_sync/image_00/data/0000000002.png'));
-I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26/2011_09_26_drive_0035_sync/image_00/data/0000000003.png'));
+% I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_10.png'));
+% I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_11.png'));
+% % I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000107.png'));
+% % I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000108.png'));
+% % I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000000.png'));
+% % I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000001.png'));
+% % I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26/2011_09_26_drive_0035_sync/image_00/data/0000000002.png'));
+% % I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26/2011_09_26_drive_0035_sync/image_00/data/0000000003.png'));
+% % I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000066.png');
+% % I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/0000000067.png');
+% % I1 =imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000022.png');
+% % I2 =imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000023.png');
+% I1 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/KITTI/dataset2/left/0000000005.png'));
+% I2 = (imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/KITTI/dataset2/left/0000000006.png'));
+% % I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000104.png');
+% % I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/datasets/2011_09_28 (2)/2011_09_28_drive_0038_sync/image_00/data/0000000105.png');
+% I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/KITTI/dataset2/2011_09_26_drive_0029_sync/image_00/data/0000000230.png');
+% I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/KITTI/dataset2/2011_09_26_drive_0029_sync/image_00/data/0000000231.png');
+
 
 % disparity_Map = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/sgm/disp_0/000132_10.png');
 
-threshold_residual = 22;
+% threshold_residual = 10;
 
 %% Find the features.
 points1 = detectHarrisFeatures(I1);
@@ -107,7 +118,7 @@ matchedPointsDistorted = pts2;
 [tform,inlierPtsDistorted,inlierPtsOriginal] = estimateGeometricTransform(matchedPointsDistorted,....
     matchedPointsOriginal,'similarity','MaxDistance',70,'Confidence',99.9);
 f1 = 254+ones(375,1242);
-figure; showMatchedFeatures(f1,f1,inlierPtsOriginal,inlierPtsDistorted, 'PlotOptions',{'yo','b+','g-'});
+figure; showMatchedFeatures(I1,I2,inlierPtsOriginal,inlierPtsDistorted, 'PlotOptions',{'yo','b+','g-'});
 title('Matched inlier points');
 
 %% gg
@@ -207,11 +218,14 @@ predicted_final = final_model_params(1,1) + (final_model_params(2,1).*X_all(:,1)
 error_final = abs(predicted_final - mag);
 size_mag = numel(mag);
 j=1;
-
+k=1;
 for i=1:size_mag
     if(error_final(i,1) > threshold_residual)
         pos(j,1) = i;
         j = j+1;
+    else
+        pos2(k,1) = i;
+        k = k +1;
     end
 end
 
@@ -222,10 +236,18 @@ for i=1:j
     segmented_pts(i,1) = m1(pos(i),1);
     segmented_pts(i,2) = m1(pos(i),2);
 end
+%% storing background points
+segmented_pts2 = zeros(1,2);
+k=k-1;
+for i=1:k
+    segmented_pts2(i,1) = m1(pos2(i),1);
+    segmented_pts2(i,2) = m1(pos2(i),2);
+end
 
 
 figure, imshow(I1), hold on,
 plot(segmented_pts(:,1),segmented_pts(:,2),'+','Color','red'), title('Magnitude based segmentation');
+plot(segmented_pts2(:,1),segmented_pts2(:,2),'+','Color','yellow'), title('Magnitude based segmentation');
 
 
 
@@ -243,11 +265,15 @@ predicted_final_orientation = final_model_params2(1,1) + (final_model_params2(2,
 error_final_orientation = abs(predicted_final_orientation - orientation_angles_all);
 size_mag = numel(orientation_angles_all);
 j=1;
-threshold_residual = 30;
+
+% threshold_residual = 30;
 for i=1:size_mag
     if(error_final_orientation(i,1) > threshold_residual)
         pos(j,1) = i;
         j = j+1;
+    else
+        pos2(k,1) = i;
+        k=k+1;
     end
 end
 %% extracting segmented points and storing their coordinates in an array
@@ -261,6 +287,8 @@ end
 
 figure, imshow(I1), hold on,
 plot(segmented_pts(:,1),segmented_pts(:,2),'+','Color','yellow'), title('Orientation based segmentation');
+
+peaks = error_final;
 
 %% playing around a bit - running the RANSAC way to find optimal model for predicting orientations of flow given (x,y)
 
