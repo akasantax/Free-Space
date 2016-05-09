@@ -1,10 +1,13 @@
 tic
 %% reading the stereo images
-I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000008_11.png');
-I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000008_11.png');
+I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000005_10.png');
+I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000005_10.png');
 I3 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_11.png');
-disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000008_10.png');
-
+disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000005_10.png');
+% 
+% 
+% I1 = imread('/home/sahdev/Desktop/dATASETSS/Dataset_Arena_workplace/Left/L17h 53m 9sLimg129.png');
+% I2 = imread('/home/sahdev/Desktop/dATASETSS/Dataset_Arena_workplace/Right/R17h 53m 9s Limg129.png');
 
 % I1_g = rgb2gray(I1);
 % I2_g = rgb2gray(I2);
@@ -40,11 +43,12 @@ for i=1:res2(1,1)
         end
     end
 end
+
 disparityMap2 = disparityMap2./200;
 imshow(disparityMap2, [0,100], 'InitialMagnification', 50);
 colormap('jet');
 colorbar;
-title('Disparity Map2');  
+title('Disparity Map');  
 
 
 
@@ -227,13 +231,17 @@ Likelihood_Dij = Likelihood_Dij*100000;
 %          end
      end     
  end
+ 
  figure, imshow(image_target);
-  figure, imshow(Likelihood_Dij,[0,10]);
+ figure, imshow(Likelihood_Dij,[0,10]);
+ 
  actual_pts = zeros(1,2);
-  for i=1:1241
-      [tx,ty] = findImageCoordinate(disparityMap2,target_pts(i,2),target_pts(i,1));
-      actual_pts(i,1) = tx;
-      actual_pts(i,2) = ty;      
+  for i=1:122
+      for j=1:res_x
+          [tx,ty] = findImageCoordinate(disparityMap2,target_pts(i,2),target_pts(i,1));
+          actual_pts((i-1)*res_x+j,1) = tx;
+          actual_pts((i-1)*res_x+j,2) = ty;      
+      end
   end
   
   %% plotting free space on the image
