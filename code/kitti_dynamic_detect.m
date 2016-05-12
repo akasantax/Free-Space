@@ -6,7 +6,7 @@ folders = {'2011_09_26 (2)/2011_09_26_drive_0046_sync/image_00/data/',...
 
 
 % Parameters:
-folder_index = 2;  % to access that particular foler for cloudy
+folder_index = 1;  % to access that particular foler from KITTI
 folder_index2 = 2;
 
 temp = [PATH folders{folder_index}];
