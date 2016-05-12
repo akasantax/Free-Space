@@ -121,10 +121,10 @@ pc = pointCloud(M);
 pc2 = pointCloud(M2);
 % pcshow(M2);
 pc_denoise = pcdenoise(pc);
-figure,pcshow(pc);
-pcshow(pc_denoise);
-figure;
-scatter3(X,Z,Y);
+% figure,pcshow(pc);
+pcshow(pc_denoise), title('Thresholded depth!!');
+% figure;
+% scatter3(X,Z,Y);
  u0 = resolution_x/2;
  v0 = resolution_y/2;
   
@@ -167,7 +167,7 @@ scatter3(X,Z,Y);
  end
  
  Likelihood = (Likelihood_Dij > 0);
- figure, imshow(Likelihood);
+ figure, imshow(Likelihood), title('Binary Occupancy.');
  
  %% Dynamic programming to segment the image
  % to implement cost(ijkl) = Ed_ij + Es_ijkl
@@ -196,7 +196,7 @@ scatter3(X,Z,Y);
      graphIt(vertex(1,i),i) = 1;         
  end
  
- figure, imshow(graphIt);
+%  figure, imshow(graphIt);
 
 Likelihood_Dij = Likelihood_Dij*100000;
  %% implementing transitions (from white to black and vice versa) based free space estimation
@@ -232,9 +232,10 @@ Likelihood_Dij = Likelihood_Dij*100000;
      end     
  end
  
- figure, imshow(image_target);
- figure, imshow(Likelihood_Dij,[0,10]);
+ figure, imshow(image_target), title('coorrect one');
+ figure, imshow(Likelihood_Dij,[0,10]), title('likelihood analog');
  
+ %% segmentation of the free space
  actual_pts = zeros(1,2);
   for i=1:122
       for j=1:res_x
@@ -243,6 +244,7 @@ Likelihood_Dij = Likelihood_Dij*100000;
           actual_pts((i-1)*res_x+j,2) = ty;      
       end
   end
+figure, imshow(I1), hold on, plot(actual_pts(:,1),375 - actual_pts(:,2));
   
   %% plotting free space on the image
 %   [m,indx2] = max(image_target);
@@ -273,46 +275,46 @@ Likelihood_Dij = Likelihood_Dij*100000;
  
  %% try with simple thresholding too.
   
- threshold = 1;
-  graph_It = zeros(grid_z,grid_x);
- 
- for i=1:grid_x
-     flag = 1;
-     for j=4:grid_z
-         if(flag==0)
-             break;
-         end
-         if (Likelihood_Dij(grid_z-j+4,i) > threshold)
-             graph_It(j,i) = 1;
-             flag = 0;
-         end
-     end
- end
- 
-%  figure, imshow(graph_It);
- 
- 
- 
- 
- 
- 
- 
- %% play around with the likelihoods
- graph2 = zeros(grid_z,grid_x);
- for i=1:grid_x
-     [m1,ind] = max(Likelihood_Dij(:,i));
-     graph2(ind,i) = 1;
- end
- 
- %% play around with likelihoods 2
- pos = 1;
- graph3 = zeros(grid_z,grid_x);
- for i=1:grid_x
-     for j=1:grid_z
-        if(Likelihood_Dij(grid_z-j+1,i) > 1)
-            pos=j;
-            break;
-        end
-     end
-     graph3(pos,i) = 1;
- end
+%  threshold = 1;
+%   graph_It = zeros(grid_z,grid_x);
+%  
+%  for i=1:grid_x
+%      flag = 1;
+%      for j=4:grid_z
+%          if(flag==0)
+%              break;
+%          end
+%          if (Likelihood_Dij(grid_z-j+4,i) > threshold)
+%              graph_It(j,i) = 1;
+%              flag = 0;
+%          end
+%      end
+%  end
+%  
+% %  figure, imshow(graph_It);
+%  
+%  
+%  
+%  
+%  
+%  
+%  
+%  %% play around with the likelihoods
+%  graph2 = zeros(grid_z,grid_x);
+%  for i=1:grid_x
+%      [m1,ind] = max(Likelihood_Dij(:,i));
+%      graph2(ind,i) = 1;
+%  end
+%  
+%  %% play around with likelihoods 2
+%  pos = 1;
+%  graph3 = zeros(grid_z,grid_x);
+%  for i=1:grid_x
+%      for j=1:grid_z
+%         if(Likelihood_Dij(grid_z-j+1,i) > 1)
+%             pos=j;
+%             break;
+%         end
+%      end
+%      graph3(pos,i) = 1;
+%  end
