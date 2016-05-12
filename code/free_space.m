@@ -1,8 +1,10 @@
 tic
 %% reading the stereo images
-I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000005_10.png');
-I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000005_10.png');
-disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000005_10.png');
+I1 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000013_10.png');
+I2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_1/000013_10.png');
+I3 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/image_0/000000_11.png');
+disparityMap2 = imread('/home/sahdev/Desktop/Spring 2016/Autonomous Driving_UofT/Project/codes_mine/displets/data/Kitti/testing/dispmaps/cnn/disp_0/000013_10.png');
+
 % 
 % 
 % I1 = imread('/home/sahdev/Desktop/dATASETSS/Dataset_Arena_workplace/Left/L17h 53m 9sLimg129.png');
@@ -234,17 +236,22 @@ Likelihood_Dij = Likelihood_Dij*100000;
  figure, imshow(image_target), title('coorrect one');
  figure, imshow(Likelihood_Dij,[0,10]), title('likelihood analog');
  
+ 
  %% segmentation of the free space
+ tic
  actual_pts = zeros(1,2);
-  for i=1:122
+ 
+size_tpts =  size(target_pts);
+  for i=1:size_tpts(1,1)
       for j=1:res_x
           [tx,ty] = findImageCoordinate(disparityMap2,target_pts(i,2),target_pts(i,1));
           actual_pts((i-1)*res_x+j,1) = tx;
           actual_pts((i-1)*res_x+j,2) = ty;      
       end
   end
-figure, imshow(I1), hold on, plot(actual_pts(:,1),375 - actual_pts(:,2));
+figure, imshow(I1), hold on, plot(actual_pts(:,1),375 - actual_pts(:,2),'Color','red','LineWidth',2);
   
+toc
   %% plotting free space on the image
 %   [m,indx2] = max(image_target);
 %   grid_coordinates = zeros(grid_x,2);
