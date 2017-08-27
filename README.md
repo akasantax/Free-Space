@@ -12,7 +12,7 @@ https://arxiv.org/abs/1708.04989
 
 please cite the paper as 
 
-Sahdev, Raghavender. "Free Space Estimation using Occupancy Grids and Dynamic Object Detection." arXiv preprint arXiv:1708.04989 (2017)
+**Sahdev, Raghavender. "Free Space Estimation using Occupancy Grids and Dynamic Object Detection." arXiv preprint arXiv:1708.04989 (2017)**
 
 Bibtex citation:
 
